@@ -1,0 +1,11 @@
+{
+    "name": "pdc10/generatepdf",
+    "autoload": {
+        "psr-4": {
+            "Pdc10\\Generatepdf\\": "src/"
+        }
+    },
+    "require": {
+        "fpdf/fpdf": "^1.84"
+    }
+}
