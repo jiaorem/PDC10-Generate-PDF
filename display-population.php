@@ -5,17 +5,16 @@ use Fpdf\Fpdf;
 
 $csv_file = 'population.csv';
 $handle = fopen($csv_file, 'r');
-$row_index = 0; // initialize
+$row_index = 1; // initialize
 $headers = [];
 $data = [];
 
 while (($row_data = fgetcsv($handle, 1000, ',')) !== FALSE)
 {
-	if ($row_index++ < 1)
+	if ($row_index++ < 2)
 	{
 		foreach ($row_data as $col)
 		{
-            //var_dump($col);
 			array_push($headers, $col);
 		}
 		continue;
@@ -28,9 +27,6 @@ while (($row_data = fgetcsv($handle, 1000, ',')) !== FALSE)
 		$tmp[$headers[$index]] = $row_data[$index];
 	}
 	array_push($data, $tmp);
-
-    //var_dump($data, $tmp);
-    //var_dump($data);
 }
 // var_dump($headers);
 // print_r('<br>');
@@ -40,28 +36,18 @@ fclose($handle);
 
 class pdf extends Fpdf
 {
-function LoadData($csv_file)
-{
-    // Read file lines
-    $lines = file($csv_file);
-    $data = array();
-    foreach($lines as $line)
-        $data[] = explode(',',trim($line));
-    return $data;
-}
-
 // Simple table
-function BasicTable($headers, $data)
+function BasicTable($header, $data)
 {
     // Header
-    foreach($headers as $col)
-        $this->Cell(60,5,$col,1);
+    foreach($header as $col)
+        $this->Cell(60,5,$col,1,0,'C');
         $this->Ln();
     // Data
     foreach($data as $row)
     {
         foreach($row as $col)
-            $this->Cell(60,5,$col,1);
+            $this->Cell(60,5,$col,1,0,'C');
             $this->Ln();
             
     }
@@ -69,10 +55,12 @@ function BasicTable($headers, $data)
 }
 
 $pdf = new pdf();
-$headers = array('ID', 'Country', 'Population (2020)');
-$data = $pdf->LoadData('population.csv');
+//$header = array('ID', 'Country', 'Population (2020)');
+//$header = $pdf->LoadHeader('population.csv');
+$header = $headers;
+$table_data = $data;
 $pdf->SetFont('Arial','',14);
 $pdf->AddPage();
-$pdf->BasicTable($headers,$data);
+$pdf->BasicTable($header,$data);
 $pdf->Output();
 
